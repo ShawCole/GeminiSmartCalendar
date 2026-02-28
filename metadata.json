@@ -1,0 +1,7 @@
+{
+  "name": "Gemini Smart Calendar",
+  "description": "A Google Calendar-style React application featuring a 3-day and 7-day view, event management, and a Gemini-powered AI scheduler assistant.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
