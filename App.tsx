@@ -1,10 +1,10 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Calendar as CalendarIcon, 
-  Menu, 
-  Plus, 
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar as CalendarIcon,
+  Menu,
+  Plus,
   Sparkles,
   Search,
   Settings,
@@ -12,10 +12,10 @@ import {
 } from 'lucide-react';
 import { COLORS, HOURS, INITIAL_EVENTS, MOCK_USER } from './constants';
 import { CalendarEvent, ViewMode, ChatSession, ChatMessage, AIUpdateEvent } from './types';
-import { 
-  getWeekDays, 
-  formatDate, 
-  isSameDay, 
+import {
+  getWeekDays,
+  formatDate,
+  isSameDay,
   getPositionStyles,
   formatTime,
   formatHour,
@@ -27,6 +27,7 @@ import {
 import EventModal from './components/EventModal';
 import AIChat from './components/AIChat';
 import PlanCreator from './components/PlanCreator';
+import useLocalStorage from './hooks/useLocalStorage';
 
 interface DragOperation {
   type: 'create' | 'move' | 'resize';
@@ -51,15 +52,27 @@ function App() {
     return new Date();
   });
   const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.Week);
-  const [events, setEvents] = useState<CalendarEvent[]>(INITIAL_EVENTS);
+  const [events, setEvents] = useLocalStorage<CalendarEvent[]>(
+    'smartcalendar_events',
+    INITIAL_EVENTS,
+    (parsed: any[]) => parsed.map((e: any) => ({ ...e, start: new Date(e.start), end: new Date(e.end) }))
+  );
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isPlanCreatorOpen, setIsPlanCreatorOpen] = useState(false);
   
   // State to store the context/explanation from the last Magic Plan generated
-  const [magicPlanContext, setMagicPlanContext] = useState('');
+  const [magicPlanContext, setMagicPlanContext] = useLocalStorage<string>('smartcalendar_plan_context', '');
 
   // Chat Sessions State
-  const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
+  const [chatSessions, setChatSessions] = useLocalStorage<ChatSession[]>(
+    'smartcalendar_chat_sessions',
+    [],
+    (parsed: any[]) => parsed.map((s: any) => ({
+      ...s,
+      updatedAt: new Date(s.updatedAt),
+      messages: s.messages.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) })),
+    }))
+  );
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
 
   // Unified Drag State

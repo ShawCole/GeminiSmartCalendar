@@ -59,7 +59,7 @@ const PlanCreator: React.FC<PlanCreatorProps> = ({ isOpen, onClose, onApplyPlan,
 
   // Load History
   useEffect(() => {
-    const saved = localStorage.getItem('magicPlanHistory');
+    const saved = localStorage.getItem('smartcalendar_plan_history');
     if (saved) {
         try {
             setHistory(JSON.parse(saved));
@@ -115,7 +115,7 @@ const PlanCreator: React.FC<PlanCreatorProps> = ({ isOpen, onClose, onApplyPlan,
     const trimmed = input.trim();
     const newHistory = [trimmed, ...history.filter(h => h !== trimmed)].slice(0, 20);
     setHistory(newHistory);
-    localStorage.setItem('magicPlanHistory', JSON.stringify(newHistory));
+    localStorage.setItem('smartcalendar_plan_history', JSON.stringify(newHistory));
     
     setIsProcessing(true);
     setGeneratedPlan(null);
